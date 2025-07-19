@@ -1,5 +1,8 @@
-moderngl
-moderngl-window
-pyrr
-numpy
-PyYAML
+moderngl==5.12.0
+moderngl-window==3.1.1
+pyrr==0.10.3
+numpy==2.3.1
+PyYAML==6.0.2
+pyglet==2.1.6
+Pillow==11.3.0
+pyglm==2.8.2
