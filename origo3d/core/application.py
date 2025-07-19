@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict,  List
 
 import logging
 import time
 import pyglet
 
 from origo3d.rendering.renderer import Renderer
-
 
 class Application:
     """Application creates a pyglet window based on configuration."""
