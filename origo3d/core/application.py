@@ -32,7 +32,7 @@ class Application:
             caption=title,
         )
 
-        self.renderer = Renderer()
+        self.renderer = Renderer(width=width, height=height)
 
         @self.window.event  # type: ignore
         def on_draw():
