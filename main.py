@@ -1,6 +1,6 @@
 # Entry point of the engine
 
-from obsidian3d.core.application import Application
+from origo3d.core.application import Application
 
 if __name__ == '__main__':
     app = Application()
