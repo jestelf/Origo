@@ -15,9 +15,9 @@ import logging
 import numpy as np
 
 import moderngl
-
 from origo3d.rendering.camera import Camera
 from origo3d.resources.model_manager import ModelManager
+
 from origo3d.shaders import FRAGMENT_SHADER_SOURCE, VERTEX_SHADER_SOURCE
 
 
@@ -39,7 +39,6 @@ class Renderer:
         self.camera = Camera()
         self.camera.set_aspect(width, height)
         self.model_manager = ModelManager()
-
         # Компиляция простейших шейдеров
         self.program = self.ctx.program(
             vertex_shader=VERTEX_SHADER_SOURCE,
@@ -63,5 +62,6 @@ class Renderer:
         self.ctx.clear(r, g, b, a)
         mvp = self.camera.mvp_matrix().astype("f4")
         self.program["u_mvp"].write(mvp.tobytes())
+
         self.vao.render(moderngl.TRIANGLES)
 
