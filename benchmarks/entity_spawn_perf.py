@@ -1,0 +1,1 @@
+# Benchmark mass entity instantiation

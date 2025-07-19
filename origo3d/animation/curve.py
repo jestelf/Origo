@@ -1,0 +1,1 @@
+# class AnimationCurve: ... # easing, bezier

@@ -1,0 +1,3 @@
+# Параметры движка
+vsync: true
+asset_cache: true

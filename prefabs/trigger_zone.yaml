@@ -1,0 +1,4 @@
+name: TriggerZone
+components:
+  - Collider
+  - TriggerLogic

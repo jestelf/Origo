@@ -1,0 +1,4 @@
+# Настройки графики
+resolution: [1280, 720]
+fov: 60
+vsync: true

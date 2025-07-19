@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Environment
+.env
+.env.*
+
+# Builds
+build/
+dist/
+
+# Resources & temp
+*.tmp
+*.bak
+*.blend1
+assets/cache/
+*.blend@
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Virtual envs
+.venv/
+venv/

@@ -1,0 +1,1 @@
+{ "name": "ExplosionFX", "components": ["Transform", "ParticleEmitter"] }

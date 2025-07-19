@@ -1,0 +1,1 @@
+# GUID-based asset registry
