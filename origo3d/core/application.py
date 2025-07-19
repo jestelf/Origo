@@ -7,6 +7,7 @@ from typing import Dict,  List
 import logging
 import time
 import pyglet
+from pyglet.display import xlib
 
 from origo3d.rendering.renderer import Renderer
 
@@ -25,12 +26,22 @@ class Application:
         vsync = self.settings.get("vsync", True)
         title = self.settings.get("title", "Origo3D")
         self.logger.info("Creating window %sx%s", width, height)
-        self.window = pyglet.window.Window(
-            width=width,
-            height=height,
-            vsync=bool(vsync),
-            caption=title,
-        )
+        try:
+            self.window = pyglet.window.Window(
+                width=width,
+                height=height,
+                vsync=bool(vsync),
+                caption=title,
+            )
+        except xlib.NoSuchDisplayException:  # pragma: no cover - depends on env
+            self.logger.warning("No display available, enabling headless mode")
+            pyglet.options["headless"] = True
+            self.window = pyglet.window.Window(
+                width=width,
+                height=height,
+                vsync=bool(vsync),
+                caption=title,
+            )
 
         self.renderer = Renderer(width=width, height=height)
 
