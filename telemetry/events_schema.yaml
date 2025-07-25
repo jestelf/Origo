@@ -1,0 +1,6 @@
+game_started:
+  description: Игрок запустил игру
+level_completed:
+  description: Уровень завершен
+ab_test_variant:
+  description: Пользователь назначен в вариант A/B
