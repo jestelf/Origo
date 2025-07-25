@@ -54,3 +54,9 @@ def get(section: str | None = None, default: Any | None = None) -> Any:
         return _settings
     return _settings.get(section, default)
 
+
+def mobile_mode() -> bool:
+    """Return ``True`` if mobile optimizations are enabled."""
+    gfx = get("graphics", {})
+    return bool(getattr(gfx, "get", lambda k, d=None: gfx.get(k, d))("mobile_mode", False))
+

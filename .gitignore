@@ -18,6 +18,10 @@ __pycache__/
 build/
 dist/
 
+# Keep platform build scripts
+!build/*.py
+!build/*.sh
+
 # Resources & temp
 *.tmp
 *.bak

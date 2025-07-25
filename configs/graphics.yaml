@@ -2,3 +2,5 @@
 resolution: [1280, 720]
 fov: 60
 vsync: true
+mobile_mode: true
+texture_resolution: 512
