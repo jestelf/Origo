@@ -37,3 +37,14 @@ class Camera:
     def set_aspect(self, width: int, height: int) -> None:
         """Обновить соотношение сторон экрана."""
         self.aspect = width / float(height)
+
+    def update_from_headset(self, headset: "HeadsetState") -> None:
+        """Синхронизировать камеру с положением VR/AR-шлема."""
+        self.position = Vector3(headset.position)
+        pitch, yaw, _ = headset.orientation
+        forward = Vector3([
+            np.cos(pitch) * np.sin(yaw),
+            np.sin(pitch),
+            np.cos(pitch) * np.cos(yaw),
+        ])
+        self.target = self.position + forward
