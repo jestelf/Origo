@@ -182,7 +182,8 @@ python main.py
 🧩 Расширяемость
 
 * Поддержка модов через `user_content/`
-* CLI-плагины: `origo_cli/plugins/` (см. `docs/extensibility.md`)
+* Управление модами: `python scripts/mod_manager.py`
+* CLI-плагины: `origo_cli/plugins/`
 * Внешние расширения: `extensions/`
 * Расширения сцены и логики через `sdk/examples/`, `tools/codegen/`
 
