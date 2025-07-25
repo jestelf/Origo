@@ -15,7 +15,7 @@ class PhysicsSystem:
 
     def register_entity(self, entity: object) -> None:
         """Находит :class:`RigidBody` у сущности и регистрирует его."""
-        for comp in getattr(entity, "components", []):
+        for comp in getattr(entity, "components", {}).values():
             if isinstance(comp, RigidBody):
                 comp.entity = entity
                 self.rigidbodies.append(comp)

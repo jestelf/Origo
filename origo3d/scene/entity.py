@@ -13,11 +13,16 @@ class Entity:
     position: Vector3 = field(default_factory=lambda: Vector3([0.0, 0.0, 0.0]))
     components: Dict[str, Any] = field(default_factory=dict)
 
-    def add_component(self, key: str, component: Any) -> Any:
+    def add_component(self, component: Any, key: str | None = None) -> Any:
         """
-        Добавить компонент под указанным ключом.
-        Если у компонента есть атрибут `entity`, он будет автоматически установлен.
+        Добавить компонент в сущность.
+
+        :param component: компонент для добавления
+        :param key: необязательный ключ. Если не задан,
+            используется имя класса компонента.
         """
+        if key is None:
+            key = component.__class__.__name__
         self.components[key] = component
         if hasattr(component, "entity"):
             setattr(component, "entity", self)
