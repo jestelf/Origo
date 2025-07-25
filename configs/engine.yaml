@@ -1,3 +1,4 @@
 # Параметры движка
 vsync: true
 asset_cache: true
+mobile_optimized: true
