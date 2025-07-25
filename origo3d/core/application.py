@@ -10,6 +10,7 @@ import time
 from devtools.performance_monitor import PerformanceMonitor
 import pyglet
 from pyglet.window import NoSuchDisplayException
+from pyglet import text
 
 from origo3d.rendering.renderer import Renderer
 
@@ -23,6 +24,7 @@ class Application:
         self.running = False
         self.logger = logging.getLogger(__name__)
         self.monitor: PerformanceMonitor | None = PerformanceMonitor() if enable_monitor else None
+        self.overlay_label: text.Label | None = None
 
     def _create_window(self) -> None:
         width, height = self.settings.get("resolution", [800, 600])
@@ -49,10 +51,22 @@ class Application:
         api = self.settings.get("api", "opengl")
         self.renderer = Renderer(width=width, height=height, api=api)
 
+        if self.monitor:
+            self.overlay_label = text.Label(
+                "",
+                x=10,
+                y=height - 10,
+                anchor_x="left",
+                anchor_y="top",
+                color=(255, 255, 255, 255),
+            )
+
         @self.window.event  # type: ignore
         def on_draw():
             if self.renderer:
                 self.renderer.render_frame()
+            if self.monitor and self.overlay_label:
+                self.overlay_label.draw()
 
         @self.window.event  # type: ignore
         def on_close():
@@ -93,7 +107,8 @@ class Application:
 
             if self.monitor:
                 self.monitor.end_frame()
-                self.logger.info(self.monitor.report())
+                if self.overlay_label:
+                    self.overlay_label.text = self.monitor.report()
 
             sleep = frame_time - (time.perf_counter() - now)
             if sleep > 0:
