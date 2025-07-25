@@ -20,13 +20,16 @@ def test_camera_mvp_shape() -> None:
     mvp = renderer.camera.mvp_matrix()
     assert mvp.shape == (4, 4)
 
-
 def test_renderer_initializes() -> None:
     renderer = _safe_renderer()
     assert renderer.program is not None
     renderer.render_frame()
 
-
 def test_model_loaded() -> None:
     renderer = _safe_renderer()
     assert renderer.vbo.size > 0
+
+def test_vulkan_backend_stub():
+    renderer = Renderer(api="vulkan")
+    renderer.render_frame()
+    assert renderer.camera is not None
