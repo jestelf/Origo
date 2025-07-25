@@ -1,4 +1,6 @@
-"""Basic tests for engine initialization."""
+"""Базовые юнит-тесты инициализации движка."""
+
+from __future__ import annotations
 
 from pathlib import Path
 import sys
