@@ -9,7 +9,7 @@ import time
 
 from devtools.performance_monitor import PerformanceMonitor
 import pyglet
-from pyglet.display import xlib
+from pyglet.window import NoSuchDisplayException
 
 from origo3d.rendering.renderer import Renderer
 
@@ -36,7 +36,7 @@ class Application:
                 vsync=bool(vsync),
                 caption=title,
             )
-        except xlib.NoSuchDisplayException:  # pragma: no cover - depends on env
+        except NoSuchDisplayException:  # pragma: no cover - depends on env
             self.logger.warning("No display available, enabling headless mode")
             pyglet.options["headless"] = True
             self.window = pyglet.window.Window(
