@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Dict,  List
+from typing import Dict, List
 
 import logging
 import time
+
+from devtools.performance_monitor import PerformanceMonitor
 import pyglet
 from pyglet.display import xlib
 
@@ -14,12 +16,13 @@ from origo3d.rendering.renderer import Renderer
 class Application:
     """Application creates a pyglet window based on configuration."""
 
-    def __init__(self, graphics_cfg: Dict | None = None):
+    def __init__(self, graphics_cfg: Dict | None = None, enable_monitor: bool = False):
         self.settings = graphics_cfg or {}
         self.window: pyglet.window.Window | None = None
         self.renderer: Renderer | None = None
         self.running = False
         self.logger = logging.getLogger(__name__)
+        self.monitor: PerformanceMonitor | None = PerformanceMonitor() if enable_monitor else None
 
     def _create_window(self) -> None:
         width, height = self.settings.get("resolution", [800, 600])
@@ -64,14 +67,33 @@ class Application:
         self.running = True
         last = time.perf_counter()
         while self.running:
+            if self.monitor:
+                self.monitor.start_frame()
+
             self.window.dispatch_events()
             now = time.perf_counter()
             dt = now - last
             last = now
+
+            if self.monitor:
+                self.monitor.start_subsystem("update")
             self.update(dt)
+            if self.monitor:
+                self.monitor.end_subsystem("update")
+
             if self.renderer:
+                if self.monitor:
+                    self.monitor.start_subsystem("render")
                 self.renderer.render_frame()
+                if self.monitor:
+                    self.monitor.end_subsystem("render")
+
             self.window.flip()
+
+            if self.monitor:
+                self.monitor.end_frame()
+                self.logger.info(self.monitor.report())
+
             sleep = frame_time - (time.perf_counter() - now)
             if sleep > 0:
                 time.sleep(sleep)

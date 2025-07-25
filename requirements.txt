@@ -6,3 +6,4 @@ PyYAML==6.0.2
 pyglet==2.1.6
 Pillow==11.3.0
 pyglm==2.8.2
+psutil==5.9.8
