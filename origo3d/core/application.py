@@ -43,7 +43,8 @@ class Application:
                 caption=title,
             )
 
-        self.renderer = Renderer(width=width, height=height)
+        api = self.settings.get("api", "opengl")
+        self.renderer = Renderer(width=width, height=height, api=api)
 
         @self.window.event  # type: ignore
         def on_draw():
