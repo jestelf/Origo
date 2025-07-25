@@ -15,8 +15,10 @@ def test_load_config():
     cfg = env_settings.load()
     assert isinstance(cfg, dict)
     assert "graphics" in cfg
+    assert cfg["graphics"].get("api") == "opengl"
 
 
 def test_application_init():
-    app = Application({"resolution": [320, 240], "vsync": False})
+    app = Application({"resolution": [320, 240], "vsync": False, "api": "opengl"})
     assert app.settings["resolution"] == [320, 240]
+
