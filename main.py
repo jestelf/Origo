@@ -10,7 +10,7 @@ if __name__ == "__main__":
     logging.info("Loading configuration")
     config = env_settings.load()
     graphics_cfg = config.get("graphics", {})
-    app = Application(graphics_cfg)
+    app = Application(graphics_cfg, enable_monitor=True)
     logging.info("Starting application")
     try:
         app.run()
