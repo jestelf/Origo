@@ -1,4 +1,6 @@
-"""Basic tests for engine initialization."""
+"""Базовые юнит-тесты инициализации движка."""
+
+from __future__ import annotations
 
 from pathlib import Path
 import sys
@@ -20,3 +22,5 @@ def test_load_config():
 def test_application_init():
     app = Application({"resolution": [320, 240], "vsync": False})
     assert app.settings["resolution"] == [320, 240]
+
+
