@@ -8,7 +8,6 @@ import time
 
 from pyrr import Vector3  # если понадобится для Entity
 from origo3d.physics.physics_system import PhysicsSystem
-from origo3d.serialization.scene_serializer import save_scene
 
 from .entity import Entity
 
@@ -16,7 +15,7 @@ from .entity import Entity
 @dataclass
 class Scene:
     """Сцена с набором сущностей, физикой и автосохранением."""
-    name: str
+    name: str = "scene"
     entities: List[Entity] = field(default_factory=list)
     physics: PhysicsSystem = field(default_factory=PhysicsSystem)
 
@@ -81,6 +80,7 @@ class Scene:
         self._stop_autosave = False
 
         def _worker() -> None:
+            from origo3d.serialization.scene_serializer import save_scene
             while not self._stop_autosave:
                 save_scene(self, path=path, cloud=cloud)
                 time.sleep(interval)
