@@ -34,11 +34,13 @@ Origo3D — это модульная, расширяемая игровая с�
   - `animations/`, `audio/`, `models/`, `textures/`, `video/`, `ui/`  
   - `locales/`: поддержка i18n через `.json/.yaml`  
   **Связи:**  
-  - Загружается через `origo3d.resources`  
+  - Загружается через `origo3d.resources`
   - Управляется через `build/`, `asset_pipeline/` и `tools/compile_shaders.py`
+  - Оптимизация мобильных ассетов: `scripts/maintenance/optimize_assets.py`
 
 - **`build/`** — Сборка проекта  
-  - Скрипты сборки: `build_game.py`, `package_game.py`  
+  - Скрипты сборки: `build_game.py`, `package_game.py`,
+    `android_build.sh`, `ios_build.sh`, `wasm_build.sh`
   - Метаданные сборки: `build/meta/`  
   - Поддержка ОС: `linux/`, `web/`, `windows/`  
   - Подпись и проверка: `build/signing/`  
