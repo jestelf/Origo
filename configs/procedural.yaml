@@ -1,0 +1,14 @@
+# Параметры процедурной генерации
+terrain:
+  width: 64
+  height: 64
+  octaves: 4
+  persistence: 0.5
+  lacunarity: 2.0
+  seed: 42
+level:
+  width: 20
+  height: 15
+  num_obstacles: 5
+  obstacle_size: [3, 3]
+  seed: 7
