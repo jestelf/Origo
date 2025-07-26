@@ -4,27 +4,29 @@ from __future__ import annotations
 
 from typing import List
 
+from ..ecs.entity_manager import EntityManager
+from ..ecs.system import System
 from .rigidbody import RigidBody
 
 
-class PhysicsSystem:
-    """Упрощённый физический менеджер."""
+class PhysicsSystem(System):
+    """Упрощённый физический менеджер, работающий через ECS."""
 
-    def __init__(self) -> None:
-        self.rigidbodies: List[RigidBody] = []
+    def __init__(self, manager: EntityManager) -> None:
+        super().__init__(manager, RigidBody)
 
-    def register_entity(self, entity: object) -> None:
-        """Находит :class:`RigidBody` у сущности и регистрирует его."""
-        for comp in getattr(entity, "components", {}).values():
-            if isinstance(comp, RigidBody):
-                comp.entity = entity
-                self.rigidbodies.append(comp)
-
-    def unregister_entity(self, entity: object) -> None:
-        """Удалить все связанные с сущностью тела из списка."""
-        self.rigidbodies = [rb for rb in self.rigidbodies if rb.entity is not entity]
+    @property
+    def rigidbodies(self) -> List[RigidBody]:
+        """Текущий список физических тел."""
+        ids = self.query.ids()
+        result: List[RigidBody] = []
+        for eid in ids:
+            rb = self.manager.get_component(eid, RigidBody)
+            if rb:
+                result.append(rb)
+        return result
 
     def update(self, dt: float) -> None:
-        """Интегрировать все зарегистрированные тела."""
+        """Интегрировать все тела, найденные через ECS."""
         for rb in self.rigidbodies:
             rb.integrate(dt)

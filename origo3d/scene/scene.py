@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 import threading
 import time
 
@@ -15,41 +15,46 @@ from .entity import Entity
 
 @dataclass
 class Scene:
-    """Сцена с набором сущностей, физикой и автосохранением."""
+    """Сцена с набором сущностей и системами ECS."""
     name: str = "scene"
-    entities: List[Entity] = field(default_factory=list)
-    physics: PhysicsSystem = field(default_factory=PhysicsSystem)
+    physics: PhysicsSystem | None = field(default=None)
     entity_manager: EntityManager = field(default_factory=EntityManager)
 
     # для автосохранения (не сериализуются)
     _autosave_thread: threading.Thread | None = field(default=None, init=False, repr=False)
     _stop_autosave: bool = field(default=False, init=False, repr=False)
 
+    def __post_init__(self) -> None:
+        if self.physics is None:
+            self.physics = PhysicsSystem(self.entity_manager)
+
+    @property
+    def entities(self) -> list[Entity]:
+        """Текущие сущности в сцене."""
+        return list(self.entity_manager.entities.values())
+
+    def create_entity(self, name: str = "") -> Entity:
+        """Создать новую сущность через ``EntityManager``."""
+        entity = self.entity_manager.create_entity(name)
+        return entity
+
     def add_entity(self, entity: Entity) -> None:
-        """
-        Добавить сущность в сцену:
-        - сохранить в список
-        - зарегистрировать в физической системе
-        """
-        self.entities.append(entity)
+        """Зарегистрировать готовую сущность в менеджере."""
         self.entity_manager.add_entity(entity)
-        self.physics.register_entity(entity)
 
     def remove_entity(self, entity: Entity | int | str) -> None:
         """Удалить сущность из сцены и отписать её от физики."""
         if not isinstance(entity, Entity):
-            ent = next((e for e in self.entities if e.id == entity), None)
+            ent = self.entity_manager.entities.get(int(entity))
             if ent is None:
                 return
             entity = ent
-        if entity in self.entities:
-            self.entities.remove(entity)
-            self.entity_manager.remove_entity(entity.id)
-            self.physics.unregister_entity(entity)
+        self.entity_manager.remove_entity(entity.id)
 
     def update(self, dt: float) -> None:
         """Обновить физику сцены за интервал dt (в секундах)."""
-        self.physics.update(dt)
+        if self.physics:
+            self.physics.update(dt)
 
     def to_dict(self) -> dict:
         """
