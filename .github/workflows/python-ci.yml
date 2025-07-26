@@ -16,11 +16,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov
+          pip install pytest pytest-cov pyautogui
       - name: Run unit and integration tests
         run: |
           mkdir -p reports
-          python -m pytest -vv tests origo3d/tests/integration qa \
+          xvfb-run -a python -m pytest -vv tests origo3d/tests/integration qa ui_tests \
             --junitxml=reports/tests.xml \
             --cov=. --cov-report=xml:reports/coverage.xml
       - name: Upload test reports
