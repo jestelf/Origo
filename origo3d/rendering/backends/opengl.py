@@ -11,13 +11,18 @@ import moderngl
 
 from origo3d.rendering.camera import Camera
 from origo3d.resources.model_manager import ModelManager
-from origo3d.shaders import get_shader_sources
+from origo3d.resources.shader_manager import ShaderManager
 
 
 class OpenGLBackend:
     """Рендерер OpenGL."""
 
-    def __init__(self, width: int = 800, height: int = 600) -> None:
+    def __init__(
+        self,
+        width: int = 800,
+        height: int = 600,
+        shader_manager: ShaderManager | None = None,
+    ) -> None:
         self.logger = logging.getLogger(__name__)
         try:
             self.ctx = moderngl.create_context()
@@ -29,8 +34,10 @@ class OpenGLBackend:
         self.camera = Camera()
         self.camera.set_aspect(width, height)
         self.model_manager = ModelManager()
-        vert_src, frag_src = get_shader_sources("opengl")
-        self.program = self.ctx.program(vertex_shader=vert_src, fragment_shader=frag_src)
+        self.shader_manager = shader_manager or ShaderManager()
+        vert_path = Path("assets/shaders/basic.vert")
+        frag_path = Path("assets/shaders/basic.frag")
+        self.program = self.shader_manager.load_program(self.ctx, vert_path, frag_path)
         self.logger.info("Shaders compiled successfully")
 
         model_path = Path("assets/models/cube.obj")
