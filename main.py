@@ -19,6 +19,7 @@ class Launcher(pyglet.window.Window):
         self.label = pyglet.text.Label(
             "1 – Запустить движок\n"
             "2 – Редактор сцен\n"
+            "3 – Полный редактор\n"
             "Esc – выход",
             anchor_x="center",
             anchor_y="center",
@@ -38,6 +39,9 @@ class Launcher(pyglet.window.Window):
             self.close()
         elif symbol == pyglet.window.key._2:
             self.selection = "editor"
+            self.close()
+        elif symbol == pyglet.window.key._3:
+            self.selection = "full_editor"
             self.close()
         elif symbol == pyglet.window.key.ESCAPE:
             self.close()
@@ -63,6 +67,13 @@ def run_editor() -> None:
     pyglet.app.run()
 
 
+def run_full_editor() -> None:
+    """Launch the multi-window editor."""
+    from editor.full_editor import FullEditor
+    FullEditor()
+    pyglet.app.run()
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -73,3 +84,5 @@ if __name__ == "__main__":
         run_engine()
     elif launcher.selection == "editor":
         run_editor()
+    elif launcher.selection == "full_editor":
+        run_full_editor()
