@@ -88,7 +88,6 @@ class SceneEditor(pyglet.window.Window):
     def draw_grid(self) -> None:
         step = self.GRID_SPACING
         modern_api = int(pyglet.version.split(".")[0]) >= 2
-
         # Pyglet 2.x uses 3D positions and RGBA colors in its default shader.
         # Provide dummy Z coordinate and full alpha so grid lines render correctly.
         for x in range(0, self.width, step):
