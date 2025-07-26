@@ -17,6 +17,7 @@ import yaml
 
 _BASE_CONFIG = Path("config.yaml")
 _CONFIG_DIR = Path("configs")
+_ENV_DIR = _CONFIG_DIR / "env"
 
 _settings: Dict[str, Any] = {}
 
@@ -25,8 +26,11 @@ def _load_yaml(file: Path) -> Dict[str, Any]:
     """Return contents of a YAML file or an empty dict if it does not exist."""
     if not file.exists():
         return {}
-    with file.open("r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
+    try:
+        with file.open("r", encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    except yaml.YAMLError:
+        return {}
 
 
 def load() -> Dict[str, Any]:
@@ -41,6 +45,14 @@ def load() -> Dict[str, Any]:
     if _CONFIG_DIR.exists():
         for path in _CONFIG_DIR.glob("*.yaml"):
             data[path.stem] = _load_yaml(path)
+
+    # Load environment variables from configs/env directory
+    env_data: Dict[str, Any] = {}
+    if _ENV_DIR.exists():
+        for path in _ENV_DIR.glob("*.yaml"):
+            env_data[path.stem] = _load_yaml(path)
+        if env_data:
+            data["env"] = env_data
 
     _settings = data
     return _settings
