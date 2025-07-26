@@ -8,6 +8,7 @@ import time
 
 from pyrr import Vector3  # если понадобится для Entity
 from origo3d.physics.physics_system import PhysicsSystem
+from origo3d.ecs.entity_manager import EntityManager
 
 from .entity import Entity
 
@@ -18,6 +19,7 @@ class Scene:
     name: str = "scene"
     entities: List[Entity] = field(default_factory=list)
     physics: PhysicsSystem = field(default_factory=PhysicsSystem)
+    entity_manager: EntityManager = field(default_factory=EntityManager)
 
     # для автосохранения (не сериализуются)
     _autosave_thread: threading.Thread | None = field(default=None, init=False, repr=False)
@@ -30,6 +32,7 @@ class Scene:
         - зарегистрировать в физической системе
         """
         self.entities.append(entity)
+        self.entity_manager.add_entity(entity)
         self.physics.register_entity(entity)
 
     def remove_entity(self, entity: Entity | int | str) -> None:
@@ -41,6 +44,7 @@ class Scene:
             entity = ent
         if entity in self.entities:
             self.entities.remove(entity)
+            self.entity_manager.remove_entity(entity.id)
             self.physics.unregister_entity(entity)
 
     def update(self, dt: float) -> None:
