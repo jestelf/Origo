@@ -5,16 +5,22 @@ import os
 SCENE_FILE = os.path.join(os.path.dirname(__file__), 'scene.yaml')
 
 class Entity:
-    def __init__(self, entity_id, x, y, width=50, height=50, color=(255, 0, 0)):
+    """Примитивный объект сцены."""
+
+    def __init__(self, entity_id: int, x: float, y: float,
+                 width: float = 50, height: float = 50,
+                 color: tuple[int, int, int] = (255, 0, 0)) -> None:
         self.id = entity_id
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.color = color
+        self.rotation = 0.0
+        self.scale = 1.0
         self.rect = pyglet.shapes.Rectangle(x, y, width, height, color=color)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             'id': self.id,
             'x': self.x,
@@ -22,11 +28,13 @@ class Entity:
             'width': self.width,
             'height': self.height,
             'color': list(self.color),
+            'rotation': self.rotation,
+            'scale': self.scale,
         }
 
     @classmethod
-    def from_dict(cls, data):
-        return cls(
+    def from_dict(cls, data: dict) -> 'Entity':
+        ent = cls(
             data['id'],
             data['x'],
             data['y'],
@@ -34,41 +42,125 @@ class Entity:
             height=data.get('height', 50),
             color=tuple(data.get('color', [255, 0, 0])),
         )
+        ent.rotation = data.get('rotation', 0.0)
+        ent.scale = data.get('scale', 1.0)
+        ent.update_shape()
+        return ent
 
-    def update_shape(self):
+    def update_shape(self) -> None:
         self.rect.x = self.x
         self.rect.y = self.y
-        self.rect.width = self.width
-        self.rect.height = self.height
+        self.rect.width = self.width * self.scale
+        self.rect.height = self.height * self.scale
         self.rect.color = self.color
+        self.rect.rotation = self.rotation
 
 class SceneEditor(pyglet.window.Window):
-    def __init__(self):
-        super().__init__(800, 600, 'Scene Editor')
-        self.entities = []
-        self.selected = None
+    """Простейший редактор сцен."""
+
+    GRID_SPACING = 50
+
+    def __init__(self) -> None:
+        super().__init__(800, 600, "Scene Editor")
+        self.entities: list[Entity] = []
+        self.selected: Entity | None = None
         self.drag_offset = (0, 0)
+        self.rotating = False
+        self.prev_mouse = (0, 0)
+        self.show_grid = True
+        self.info_label = pyglet.text.Label(
+            "N - новый объект | Delete - удалить | Ctrl+S - сохранить | Ctrl+L - загрузка",
+            x=5,
+            y=self.height - 5,
+            anchor_x="left",
+            anchor_y="top",
+        )
         self.load_scene()
 
     def on_draw(self):
         self.clear()
+        if self.show_grid:
+            self.draw_grid()
         for e in self.entities:
             e.rect.draw()
+        self.info_label.draw()
+
+    def draw_grid(self) -> None:
+        step = self.GRID_SPACING
+        for x in range(0, self.width, step):
+            pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                                ("v2f", (x, 0, x, self.height)),
+                                ("c3B", (200, 200, 200) * 2))
+        for y in range(0, self.height, step):
+            pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                                ("v2f", (0, y, self.width, y)),
+                                ("c3B", (200, 200, 200) * 2))
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.N:
+        ctrl = modifiers & pyglet.window.key.MOD_CTRL
+        if symbol == pyglet.window.key.N and ctrl:
             self.add_entity()
-        elif symbol == pyglet.window.key.S:
+        elif symbol == pyglet.window.key.S and ctrl:
             self.save_scene()
-        elif symbol == pyglet.window.key.L:
+        elif symbol == pyglet.window.key.L and ctrl:
             self.load_scene()
+        elif symbol == pyglet.window.key.D and ctrl and self.selected:
+            self.duplicate_selected()
+        elif symbol == pyglet.window.key.DELETE and self.selected:
+            self.entities.remove(self.selected)
+            self.selected = None
+        elif symbol == pyglet.window.key.R and self.selected:
+            self.selected.rotation = (self.selected.rotation + 15) % 360
+            self.selected.update_shape()
+        elif symbol in (pyglet.window.key.PLUS, pyglet.window.key.NUM_ADD) and self.selected:
+            self.selected.scale += 0.1
+            self.selected.update_shape()
+        elif symbol in (pyglet.window.key.MINUS, pyglet.window.key.NUM_SUBTRACT) and self.selected:
+            self.selected.scale = max(0.1, self.selected.scale - 0.1)
+            self.selected.update_shape()
+        elif symbol == pyglet.window.key.G:
+            self.show_grid = not self.show_grid
+
+    def on_text_motion(self, motion: int):
+        if not self.selected:
+            return
+        if motion == pyglet.window.key.MOTION_LEFT:
+            self.selected.x -= 5
+        elif motion == pyglet.window.key.MOTION_RIGHT:
+            self.selected.x += 5
+        elif motion == pyglet.window.key.MOTION_UP:
+            self.selected.y += 5
+        elif motion == pyglet.window.key.MOTION_DOWN:
+            self.selected.y -= 5
+        self.selected.update_shape()
 
     def add_entity(self):
         entity_id = len(self.entities) + 1
         e = Entity(entity_id, 100, 100)
         self.entities.append(e)
 
+    def duplicate_selected(self) -> None:
+        if not self.selected:
+            return
+        entity_id = len(self.entities) + 1
+        copy = Entity(
+            entity_id,
+            self.selected.x + 10,
+            self.selected.y + 10,
+            width=self.selected.width,
+            height=self.selected.height,
+            color=self.selected.color,
+        )
+        copy.rotation = self.selected.rotation
+        copy.scale = self.selected.scale
+        copy.update_shape()
+        self.entities.append(copy)
+
     def on_mouse_press(self, x, y, button, modifiers):
+        if button == pyglet.window.mouse.RIGHT and self.selected:
+            self.rotating = True
+            self.prev_mouse = (x, y)
+            return
         if button != pyglet.window.mouse.LEFT:
             return
         for e in self.entities:
@@ -80,12 +172,17 @@ class SceneEditor(pyglet.window.Window):
     def on_mouse_release(self, x, y, button, modifiers):
         if button == pyglet.window.mouse.LEFT:
             self.selected = None
+        elif button == pyglet.window.mouse.RIGHT:
+            self.rotating = False
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if buttons & pyglet.window.mouse.LEFT and self.selected:
             offset_x, offset_y = self.drag_offset
             self.selected.x = x - offset_x
             self.selected.y = y - offset_y
+            self.selected.update_shape()
+        if self.rotating and self.selected and (buttons & pyglet.window.mouse.RIGHT):
+            self.selected.rotation += dx
             self.selected.update_shape()
 
     def save_scene(self):
