@@ -178,6 +178,7 @@ python main.py
   * `build --platform <p>` — вызов сборщика
 * `python scripts/scene_runner.py` — запуск сцены напрямую
 * `python build/build_game.py` — сборка билда
+* `python tools/check_resources.py` — проверка ассетов и сцен
 
 🎮 Редактор сцен
 * `python editor/scene_editor.py` — запустит упрощённый редактор.
