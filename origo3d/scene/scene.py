@@ -32,6 +32,17 @@ class Scene:
         self.entities.append(entity)
         self.physics.register_entity(entity)
 
+    def remove_entity(self, entity: Entity | int | str) -> None:
+        """Удалить сущность из сцены и отписать её от физики."""
+        if not isinstance(entity, Entity):
+            ent = next((e for e in self.entities if e.id == entity), None)
+            if ent is None:
+                return
+            entity = ent
+        if entity in self.entities:
+            self.entities.remove(entity)
+            self.physics.unregister_entity(entity)
+
     def update(self, dt: float) -> None:
         """Обновить физику сцены за интервал dt (в секундах)."""
         self.physics.update(dt)
