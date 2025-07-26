@@ -20,6 +20,15 @@ def register(cli):
     print("Plugin active")
 ```
 
+После установки плагинов CLI можно запустить так:
+
+```bash
+python -m origo_cli.runner validate-shaders
+```
+
+Загрузчик подключит все модули из `origo_cli/plugins` и передаст CLI объект в их
+функцию `register`, поэтому команда `validate-shaders` станет доступна.
+
 ## Игровые расширения
 
 Внешние расширения располагаются в каталоге `extensions/` в корне проекта либо в
