@@ -87,14 +87,26 @@ class SceneEditor(pyglet.window.Window):
 
     def draw_grid(self) -> None:
         step = self.GRID_SPACING
+        modern_api = int(pyglet.version.split(".")[0]) >= 2
+
         for x in range(0, self.width, step):
-            pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
-                                ("v2f", (x, 0, x, self.height)),
-                                ("c3B", (200, 200, 200) * 2))
+            if modern_api:
+                pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                                     position=("f", (x, 0, x, self.height)),
+                                     colors=("Bn", (200, 200, 200) * 2))
+            else:
+                pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                                     ("v2f", (x, 0, x, self.height)),
+                                     ("c3B", (200, 200, 200) * 2))
         for y in range(0, self.height, step):
-            pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
-                                ("v2f", (0, y, self.width, y)),
-                                ("c3B", (200, 200, 200) * 2))
+            if modern_api:
+                pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                                     position=("f", (0, y, self.width, y)),
+                                     colors=("Bn", (200, 200, 200) * 2))
+            else:
+                pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                                     ("v2f", (0, y, self.width, y)),
+                                     ("c3B", (200, 200, 200) * 2))
 
     def on_key_press(self, symbol, modifiers):
         ctrl = modifiers & pyglet.window.key.MOD_CTRL
