@@ -1,0 +1,27 @@
+- color:
+  - 255
+  - 0
+  - 0
+  height: 50
+  id: 1
+  width: 50
+  x: 277.0
+  y: 422.0
+- color:
+  - 255
+  - 0
+  - 0
+  height: 50
+  id: 2
+  width: 50
+  x: 376.0
+  y: 323.0
+- color:
+  - 255
+  - 0
+  - 0
+  height: 50
+  id: 3
+  width: 50
+  x: 133.0
+  y: 335.0
