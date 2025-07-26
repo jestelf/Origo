@@ -20,6 +20,10 @@ class PhysicsSystem:
                 comp.entity = entity
                 self.rigidbodies.append(comp)
 
+    def unregister_entity(self, entity: object) -> None:
+        """Удалить все связанные с сущностью тела из списка."""
+        self.rigidbodies = [rb for rb in self.rigidbodies if rb.entity is not entity]
+
     def update(self, dt: float) -> None:
         """Интегрировать все зарегистрированные тела."""
         for rb in self.rigidbodies:

@@ -24,3 +24,21 @@ def test_rigidbody_motion():
     scene.update(1.0)
 
     assert ent.position.y > 0
+
+
+def test_remove_entity_from_physics():
+    scene = Scene()
+    ent1 = Entity("e1")
+    ent1.add_component(RigidBody())
+    ent2 = Entity("e2")
+    ent2.add_component(RigidBody())
+    scene.add_entity(ent1)
+    scene.add_entity(ent2)
+
+    assert len(scene.physics.rigidbodies) == 2
+
+    scene.remove_entity(ent1)
+    assert len(scene.physics.rigidbodies) == 1
+
+    scene.remove_entity(ent2.id)
+    assert len(scene.physics.rigidbodies) == 0
